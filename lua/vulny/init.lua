@@ -100,6 +100,28 @@ function M.setup(opts)
   end
   vim.api.nvim_create_user_command('VulnySnykRun', snyk_run, {})
   vim.keymap.set('n', '<leader>vsr', snyk_run, {})
+
+  -- SNYK LSP SUPPORTED COMMANDS
+  --
+  -- commands = { "snyk.navigateToRange", "snyk.workspace.scan", "snyk.workspaceFolder.scan", "snyk.openBrowser", "snyk.login", "snyk.copyAuthLink", "snyk.logout", "snyk.trustWorkspaceFolders", "snyk.openLearnLesson", "snyk.getLearnLesson", "snyk.getSettingsSastEnabled", "snyk.getFeatureFlagStatus", "snyk.getActiveUser", "snyk.code.fix", "snyk.code.submitFixFeedback", "snyk.code.fixDiffs", "snyk.executeCLI" }
+  -- 
+  -- This list can be obtained with `:lua print(vim.inspect(vim.lsp.get_active_clients()[<idx>].server_capabilities))`
+
+  -- Check what active user is configured in Snyk
+  local function snyk_get_active_user()
+    local params = {
+      command = "snyk.getActiveUser",
+    }
+    vim.lsp.buf_request(0, 'workspace/executeCommand', params, function(err, result, _, _)
+      if err then
+        vim.notify('Error: ' .. err.message, vim.log.levels.ERROR)
+      else
+        vim.notify(vim.inspect(result))
+      end
+    end)
+  end
+  vim.api.nvim_create_user_command('VulnySnykGetUser', snyk_get_active_user, {})
+  vim.keymap.set('n', '<leader>vsgu', snyk_run, {})
 end
 
 return M
